@@ -1,7 +1,24 @@
+#include "ThreadManager.h"
 #include <iostream>
-#include <thread>
 #include <string>
+#include <mutex>
 using namespace std;
+
+std::mutex mu;
+
+template<typename First, typename... Args>
+void shared_print(First first, Args... args) {
+	std::lock_guard<mutex> locker(mu);
+	_print(first, args...);
+}
+template<typename First, typename... Args>
+void _print(First first, Args... args) {
+	std::cout << first;
+	_print(args...);
+}
+void _print() {
+	std::cout << endl;
+}
 
 void function_1() {
 	cout << "Beauty is only skin-deep" << endl;
@@ -9,58 +26,42 @@ void function_1() {
 
 class Functor {
 public :
-	void operator()() {
+	void operator()(const string& msg) {
 		for (int i = 0; i > -50; --i) {
-			cout << "from t1 : " << i << endl;
+			shared_print("from t1 : ", i, " : ", msg);
 		}
+		shared_print("work done.");
 	}
 };
 
-class Thread {
-private :
-	std::thread t1;
-	bool _force_quit;
-public :
-	template<typename Fn, typename... Args>
-	Thread(Fn&& fn, Args&&... args) : t1(fn, args...), _force_quit(true) {
-	}
-	Thread() : _force_quit(true) {
-	}
-	Thread(Thread&& other) : t1(std::move(other.t1)), _force_quit(other._force_quit) {
-	}
-	Thread(const Thread&) = delete;
-	Thread& operator=(const Thread&) = delete;
-	~Thread() {
-		if (t1.joinable()) {
-			if (_force_quit)
-				t1.detach();
-			else
-				t1.join();
-		}
-	}
-
-	void force_quit(bool quit) {
-		_force_quit = quit;
-	}
-	std::thread::id get_id() const noexcept {
-		return t1.get_id();
-	}
-};
+//template<typename Fn, typename... Args>
+//struct Task {
+//	Fn fn;
+//	Args args;
+//};
+//
+//template<typename Fn, typename... Args>
+//Task<Fn, Args...> make_task(Fn&& fn, Args&&...args) {
+//	return Task<Fn, Args...>(fn, args...);
+//}
 
 int main() {
-	Thread t1((Functor()));
-	cout << "t1 is " << t1.get_id() << endl;
+	string s = "Where there is no trust, there is no love";
+	Thread some;// ((Functor()), std::string("test"));
+	Thread&& job = Thread((Functor()), s);
+	some = std::move(job);
+	shared_print("t1 is ", some.get_id());
 
-	//t1.force_quit(false);
+	some.force_quit(false);
 
 	for (int i = 0; i < 100; ++i) {
-		cout << "from main : " << i << endl;
+		shared_print("from main : ", i);
 	}
 
-	Thread t2 = std::move(t1);
+	Thread t2 = std::move(some);
 
-	cout << "t1 is " << t1.get_id() << endl;
-	cout << "t2 is " << t2.get_id() << endl;
+	shared_print("t1 is ", some.get_id());
+	shared_print("t2 is ", t2.get_id());
 
 	return 0;
 }
