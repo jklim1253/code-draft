@@ -23,16 +23,10 @@ private :
 public :
 	template<typename Fn, typename... Args>
 	Thread(Fn&& fn, Args&&... args) : t1(fn, args...), _force_quit(true) {
-
 	}
 	Thread() : _force_quit(true) {
-
 	}
-	void force_quit(bool quit) {
-		_force_quit = quit;
-	}
-	std::thread::id get_id() const noexcept {
-		return t1.get_id();
+	Thread(Thread&& other) : t1(std::move(other.t1)), _force_quit(other._force_quit) {
 	}
 	Thread(const Thread&) = delete;
 	Thread& operator=(const Thread&) = delete;
@@ -44,10 +38,18 @@ public :
 				t1.join();
 		}
 	}
+
+	void force_quit(bool quit) {
+		_force_quit = quit;
+	}
+	std::thread::id get_id() const noexcept {
+		return t1.get_id();
+	}
 };
 
 int main() {
 	Thread t1((Functor()));
+	cout << "t1 is " << t1.get_id() << endl;
 
 	//t1.force_quit(false);
 
@@ -55,7 +57,10 @@ int main() {
 		cout << "from main : " << i << endl;
 	}
 
-	cout << t1.get_id() << endl;
+	Thread t2 = std::move(t1);
+
+	cout << "t1 is " << t1.get_id() << endl;
+	cout << "t2 is " << t2.get_id() << endl;
 
 	return 0;
 }
