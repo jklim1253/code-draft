@@ -10,8 +10,6 @@ public :
 
 	void run();
 
-	void send();
-
 private :
 	TcpServerImpl* impl;
 };

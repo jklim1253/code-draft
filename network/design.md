@@ -1,11 +1,15 @@
-server
+server procedure
 
-010. port number
+010. prepare acceptor
+	- 011. endpoint
+		- 012. port number
+		- 013. protocol type(tcp, udp, icmp)
+	- 015. backlog
 050. acceptor.listen
 
-090. prepare session(need to manage).
-099. prepare socket(need to manage).
-100. acceptor.async_accept
+	- 090. prepare session(need to manage).
+	- 099. prepare socket(need to manage).
+100. acceptor.async_accept(operation accept)
 
 	- 110. prepare mutable_buffer(header buffer) - at Session
 	- 120. socket.async_receive(header receive)
@@ -21,13 +25,24 @@ server
 400. socket.shutdown
 410. socket.close
 
+Requirement
+Server
+	- boost::asio::io_service(noncopyable)
+	- boost::asio::ip::tcp::acceptor
+	- port number(configurable)
+	- backlog(configurable, optional)
+
 Session
 	- socket
 	- mutable_buffer
 	- const_buffer
-	- time record of read
-	- time record of write
-	- validate header
-	- process data buffer
+	- last record of read
+	- last record of write
 	- local endpoint
 	- remote endpoint
+	- prepare header buffer.
+	- validate header
+	- prepare data buffer.
+	- process received data.
+	- process send data.
+	- prepare send buffer.
