@@ -32,5 +32,8 @@
     <ClInclude Include="sessionbase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="testsession.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

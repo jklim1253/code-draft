@@ -6,10 +6,10 @@ using namespace boost::asio;
 class SessionBase {
 public :
 	typedef ip::tcp::socket socketType;
-private :
+protected :
 	std::shared_ptr<socketType> _socket;
-	mutable_buffer _out_packet;
-	const_buffer _in_packet;
+	mutable_buffer _in_packet;
+	const_buffer _out_packet;
 	time_t _last_read_time;
 	time_t _last_write_time;
 public :
@@ -21,8 +21,26 @@ public :
 	// send part.
 	virtual void process_send_data() = 0;
 	virtual void prepare_send_buffer() = 0;
+	virtual void notify_sent_result() = 0;
 	// utility.
 	inline ip::tcp::endpoint local() const;
 	inline ip::tcp::endpoint remote() const;
 	std::shared_ptr<socketType>& socket();
+	// buffer relative
+	// receive buffer
+	virtual mutable_buffer& header() = 0;
+	virtual mutable_buffer& data() = 0;
+	// send buffer
+	virtual const_buffer& out_packet() = 0;
+};
+
+struct SessionCreator {
+	virtual std::shared_ptr<SessionBase> create() = 0;
+};
+
+template<typename Derived>
+struct SessionCreatorTemplate : public SessionCreator {
+	virtual std::shared_ptr<SessionBase> create() {
+		return std::make_shared<Derived>();
+	}
 };

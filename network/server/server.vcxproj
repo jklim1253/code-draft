@@ -151,6 +151,7 @@
     <ClCompile Include="sessionbase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="testsession.h" />
     <ClInclude Include="server.h" />
     <ClInclude Include="sessionbase.h" />
   </ItemGroup>
