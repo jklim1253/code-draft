@@ -1,6 +1,20 @@
 #include <iostream>
 #include <memory>
 
+struct Receiver {
+	virtual void prepare_header_buffer() = 0;
+	virtual void prepare_data_buffer() = 0;
+	virtual void process_header() = 0;
+	virtual void process_data() = 0;
+};
+struct WebReceiver : public Receiver {
+	void prepare_header_buffer() {
+	}
+};
+struct Sender {
+};
+struct WebSender : public Sender {
+};
 struct SessionBase {
 	int a;
 
@@ -10,6 +24,9 @@ struct SessionBase {
 	void setA(int _a) {
 		a = _a;
 	}
+
+	std::shared_ptr<Receiver> receiver;
+	std::shared_ptr<Sender> sender;
 };
 
 struct WebSession : public SessionBase {
