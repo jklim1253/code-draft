@@ -26,5 +26,8 @@
     <ClInclude Include="architecture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DeviceBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
