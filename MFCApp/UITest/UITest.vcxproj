@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{880CD0C2-5D77-4B0D-9D58-F16AEA8F593D}</ProjectGuid>
-    <RootNamespace>MainApp</RootNamespace>
+    <ProjectGuid>{F42460F1-EF5C-4D41-AC5A-1C1688A2ED62}</ProjectGuid>
+    <RootNamespace>UITest</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
     <Keyword>MFCProj</Keyword>
   </PropertyGroup>
@@ -185,41 +185,39 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ExRes.h" />
-    <ClInclude Include="MainApp.h" />
-    <ClInclude Include="MainAppDlg.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="WICWrapper.h" />
+    <ClInclude Include="UIButton.h" />
+    <ClInclude Include="UITest.h" />
+    <ClInclude Include="UITestDlg.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ExRes.cpp" />
-    <ClCompile Include="MainApp.cpp" />
-    <ClCompile Include="MainAppDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="WICWrapper.cpp" />
+    <ClCompile Include="UIButton.cpp" />
+    <ClCompile Include="UITest.cpp" />
+    <ClCompile Include="UITestDlg.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="MainApp.rc" />
+    <ResourceCompile Include="UITest.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\MainApp.rc2" />
+    <None Include="res\UITest.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\MainApp.ico" />
+    <Image Include="res\UITest.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties RESOURCE_FILE="MainApp.rc" />
+      <UserProperties RESOURCE_FILE="UITest.rc" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
