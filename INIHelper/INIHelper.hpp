@@ -51,11 +51,11 @@ public :
 	}
 	template<typename T>
 	T GetValue(const char* szSection, const char* szKey, T default_value = T()) throw(...) {
-		return useSection(szSection).SetValue(szKey, default_value);
+		return useSection(szSection).GetValue(szKey, default_value);
 	}
 	template<typename T>
 	T GetValue(const char* szFileName, const char* szSection, const char* szKey, T default_value = T()) throw(...) {
-		return useFile(szFileName).SetValue(szSection, szKey, default_value);
+		return useFile(szFileName).GetValue(szSection, szKey, default_value);
 	}
 private :
 	void Write(const char* szKey, const char* szValue) throw(...);
