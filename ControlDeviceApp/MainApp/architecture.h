@@ -44,9 +44,18 @@ class Controller {
 
 	Single Model
 	Multiple View
+		- main View : configurable by client at run-time.
+		- section view
+			- alarm view
+			- IO view
+			- manual view
+			- teaching view
+			- setting view
 	Multiple Controller
+		- 
 
 */
+#include <list>
 class MVCArchitecture : public Architecture {
 public :
 	virtual void Initialize() {}
@@ -76,5 +85,8 @@ public :
 		return cbuilder->Create();
 	}
 
-
+private :
+	std::list<Model*> Modellist;
+	std::list<View*> Viewlist;
+	std::list<Controller*> Controllerlist;
 };

@@ -1,5 +1,7 @@
 #include "define.h"
 
+HWND hMainWnd;
+
 INT WINAPI _tWinMain(HINSTANCE hInst,
 	HINSTANCE hPreInst,
 	LPTSTR lpCmdLine,
@@ -30,14 +32,14 @@ INT WINAPI _tWinMain(HINSTANCE hInst,
 	INT x = (::GetSystemMetrics(SM_CXSCREEN) - cx) / 2;
 	INT y = (::GetSystemMetrics(SM_CYSCREEN) - cy) / 2;
 
-	HWND hWnd = ::CreateWindowEx(0, lpszClassName, _T("UI Test"), dwStyle, x, y, cx, cy, NULL, NULL, hInst, NULL);
-	if (hWnd == NULL) {
+	hMainWnd = ::CreateWindowEx(0, lpszClassName, _T("UI Test"), dwStyle, x, y, cx, cy, NULL, NULL, hInst, NULL);
+	if (hMainWnd == NULL) {
 		DWORD dwError = ::GetLastError();
 		return dwError;
 	}
 
-	::ShowWindow(hWnd, SW_NORMAL);
-	::UpdateWindow(hWnd);
+	::ShowWindow(hMainWnd, SW_NORMAL);
+	::UpdateWindow(hMainWnd);
 
 	MSG msg;
 	while (true) {

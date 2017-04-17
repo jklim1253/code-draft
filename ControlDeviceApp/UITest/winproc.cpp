@@ -1,5 +1,5 @@
 #include "define.h"
-#include <CommCtrl.h>
+#include <CommCtrl.h>	// for LISTVIEW control
 #include <sstream>
 
 #if defined(UNICODE) || defined(_UNICODE)
@@ -8,6 +8,12 @@
 #define tostringstream ostringstream
 #endif
 
+IDGenerator::Control_ID_Type IDGenerator::operator () () {
+	static Control_ID_Type cid = 100;
+	return cid++;
+}
+
+HWND hPrevFocusWnd = NULL;
 HWND hList = NULL;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
@@ -22,20 +28,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	}
 	else if (uMsg == WM_KEYDOWN) {
 		if (wParam == VK_ESCAPE) {
-			//::DestroyWindow(hWnd);
-			::SendMessage(hWnd, WM_SYSCOMMAND, SC_CLOSE, 0);
+			if (hPrevFocusWnd) {
+				::SetFocus(hPrevFocusWnd);
+			}
 
+			::SendMessage(hMainWnd, WM_SYSCOMMAND, SC_CLOSE, 0);
 			return 0;
 		}
 	}
+	else if (uMsg == WM_LBUTTONDOWN) {
+		hPrevFocusWnd = ::GetParent(hWnd);
+		::SetFocus(hWnd);
+
+		return 0;
+	}
 	else if (uMsg == WM_CREATE) {
 		// create List Control
-		DWORD dwStyle = WS_CHILD | LVS_REPORT | LVS_EDITLABELS | WS_BORDER | LVS_OWNERDATA;
-		hList = ::CreateWindowEx(0, WC_LISTVIEW, _T("Test List"), dwStyle,
-			100, 100, 300, 400, hWnd, (HMENU)IDC_TESTLIST, (HINSTANCE)::GetModuleHandle(NULL), NULL);
+		DWORD dwExStyle = LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES;
+		DWORD dwStyle = WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_TABSTOP | LVS_REPORT;
+		hList = ::CreateWindowEx(dwExStyle, WC_LISTVIEW, _T("Test List"), dwStyle,
+			100, 100, 300, 400, hWnd, (HMENU)IDGen, (HINSTANCE)::GetModuleHandle(NULL), NULL);
 
-		::ShowWindow(hList, SW_SHOW);
-		::UpdateWindow(hList);
+		//::ShowWindow(hList, SW_SHOW);
+		//::UpdateWindow(hList);
 
 		LPTSTR szHeader[] = {_T("First"), _T("Second"), _T("Third")};
 		LVCOLUMN lvc;
@@ -43,7 +58,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 
 		for (int iCol = 0; iCol < 3; iCol++) {
-			lvc.cx = 100;
+			lvc.cx = 90;
 			lvc.iSubItem = iCol;
 			lvc.fmt = LVCFMT_CENTER;
 
@@ -69,7 +84,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				_stprintf_s(buffer, oss.str().c_str());
 
 				lvi.pszText = buffer;
-				lvi.cchTextMax = 100;
 
 				int ret = 0;
 				if (iCol == 0) {
