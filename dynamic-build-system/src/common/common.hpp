@@ -13,7 +13,7 @@
 namespace common
 {
 
-extern COMMON_API int version();
+COMMON_API int version();
 
 } // namespace common
 

@@ -11,6 +11,7 @@ enum error_code
   // system
   failed_to_initialize,
   failed_to_release,
+  failed_to_load_plugin,
 
   critical_error = 0x40000000,
 };

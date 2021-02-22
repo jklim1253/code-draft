@@ -4,13 +4,21 @@
 #include <vector>
 #include <string>
 
+#ifdef UTIL_EXPORTS
+# define UTIL_API __declspec(dllexport)
+#else
+# define UTIL_API __declspec(dllimport)
+#endif
+
 namespace util
 {
 
 using token_type = std::vector<std::string>;
 
-token_type tokenize(std::string const& src, std::string const& delimiter = " \t\n");
+UTIL_API token_type tokenize(std::string const& src,
+                             std::string const& delimiter = " \t\n");
 
+UTIL_API std::string executable_path();
 }
 
 #endif // __UTIL_HPP__

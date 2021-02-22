@@ -10,7 +10,7 @@
 #include "util/util.hpp"
 #include "common/common.hpp"
 #include "base/isystem.hpp"
-#include "core/iosystem/iosystem.hpp"
+#include "core/core.hpp"
 
 struct critical_section
 {
@@ -143,6 +143,7 @@ private :
 private :
   std::list<isystem*> systems;
   int m_state;
+  core::loader m_loader;
 
 public :
   // Inherited via isystem
@@ -202,7 +203,15 @@ public :
     {
       m_state = ac::need_to_stop;
     }
-    return 0;
+    else if (tokens.size() == 2 && tokens[0] == "load")
+    {
+      m_loader.load(tokens[1], "test");
+    }
+    else if (tokens.size() == 1 && tokens[0] == "list")
+    {
+      m_loader.list();
+    }
+    return ec::no_error;
   }
 
   void error_process(int error_code)

@@ -3,14 +3,15 @@
 namespace util
 {
 
-token_type tokenize(std::string const& src, std::string const& delimiter/*=" \t\n"*/)
+token_type tokenize(std::string const& src,
+                    std::string const& delimiter/*=" \t\n"*/)
 {
   token_type tokens;
   bool need_to_ticket = true;
 
   for (auto const& c : src)
   {
-    if (delimiter.cend() == std::find(delimiter.cbegin(), delimiter.cend(), c))
+    if (delimiter.end() == std::find(delimiter.begin(), delimiter.end(), c))
     {
       if (need_to_ticket)
       {
