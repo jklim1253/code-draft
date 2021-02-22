@@ -3,9 +3,38 @@
 #include <mutex>
 #include <condition_variable>
 #include <functional>
+#include <string>
 
 namespace common
 {
+
+struct printer
+{
+  printer(std::string const& _what)
+    : what(_what)
+  {
+  }
+  printer(const char* _what)
+    : what(_what)
+  {
+  }
+  void operator()() const
+  {
+    std::cout << what << std::endl;
+  }
+  printer& operator=(std::string const& _what)
+  {
+    what = _what;
+    return *this;
+  }
+  printer& operator=(const char* _what)
+  {
+    what.assign(_what);
+    return *this;
+  }
+private:
+  std::string what;
+};
 
 template<class Init, class Release>
 struct atlast_base
@@ -25,7 +54,7 @@ private:
   Release release;
 };
 
-using atlast = atlast_base<std::function<void()>, std::function<void()>>;
+using atlast = atlast_base<printer, printer>;
 
 } // namespace common
 
@@ -144,7 +173,7 @@ private:
 
 void foo()
 {
-  std::cout << "world tour" << std::endl;
+  std::cout << "world tour\n";
 }
 
 int main()
@@ -158,12 +187,8 @@ int main()
   {
     common::atlast block
     (
-      [](){
-        std::cout << "[normal sync wait] start" << std::endl;
-      },
-      [](){
-        std::cout << "[normal sync wait] finish" << std::endl;
-      }
+      "[normal sync wait] start",
+      "[normal sync wait] finish"
     );
     std::shared_ptr<normal::timer> t = std::make_shared<normal::timer>(std::chrono::seconds(5));
     normal::worker sample(t);
@@ -173,12 +198,8 @@ int main()
   {
     common::atlast block
     (
-      [](){
-        std::cout << "[normal async wait] start" << std::endl;
-      },
-      [](){
-        std::cout << "[normal async wait] finish" << std::endl;
-      }
+      common::printer("[normal async wait] start"),
+      common::printer("[normal async wait] finish")
     );
     std::shared_ptr<normal::timer> t = std::make_shared<normal::timer>(std::chrono::seconds(5));
     normal::worker sample(t);
@@ -187,7 +208,7 @@ int main()
     std::this_thread::sleep_for(std::chrono::seconds(5)); // force to wait for async task to be executed
   }
 
-  std::cout << "bye" << std::endl;
+  std::cout << "press any key to exit...";
   std::cin.get();
   return 0;
 }
