@@ -1,0 +1,11 @@
+{
+  "files.associations": {
+    "thread": "cpp",
+    "atomic": "cpp",
+    "condition_variable": "cpp",
+    "future": "cpp",
+    "memory": "cpp",
+    "mutex": "cpp",
+    "*.ipp": "cpp"
+  }
+}
