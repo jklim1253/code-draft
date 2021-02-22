@@ -1,6 +1,6 @@
 # Dynamic Build System
 
-## What I want to do
+## What I want to make
 
 command line based system controller
 

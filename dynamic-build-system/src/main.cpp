@@ -8,53 +8,9 @@
 #include <mutex>
 
 #include "util/util.hpp"
-
-namespace ec
-{
-enum error_code
-{
-  no_error = 0,
-  not_implemented_yet,
-
-  // system
-  failed_to_initialize,
-  failed_to_release,
-
-  critical_error = 0x40000000,
-};
-} // namespace ec
-
-namespace ac
-{
-enum application_code
-{
-  idle = 0,
-  need_to_stop,
-  running,
-  no_response,
-};
-} // namespace ac
-
-struct ISystem
-{
-  virtual int Initialize() = 0;
-  virtual int Release() = 0;
-
-  ISystem(std::string const& _name)
-    : m_name(_name)
-  {
-  }
-  virtual ~ISystem()
-  {
-  }
-  std::string name() const
-  {
-    return m_name;
-  }
-
-private :
-  std::string m_name;
-};
+#include "common/common.hpp"
+#include "base/isystem.hpp"
+#include "core/iosystem/iosystem.hpp"
 
 struct critical_section
 {
@@ -102,34 +58,15 @@ struct LogData
   ILogSender<LogData>* sender;
 };
 
-class IOSystem
-  : public ISystem
-{
-public :
-  IOSystem()
-    : ISystem("IOSystem")
-  {
-  }
-  // Inherited via ISystem
-  virtual int Initialize() override
-  {
-    return ec::not_implemented_yet;
-  }
-  virtual int Release() override
-  {
-    return ec::not_implemented_yet;
-  }
-};
-
 class MotorSystem
-  : public ISystem
+  : public base::isystem
 {
 public :
   MotorSystem()
-    : ISystem("MotorSystem")
+    : isystem("MotorSystem")
   {
   }
-  // Inherited via ISystem
+  // Inherited via isystem
   virtual int Initialize() override
   {
     return ec::not_implemented_yet;
@@ -141,14 +78,14 @@ public :
 };
 
 class VisionSystem
-  : public ISystem
+  : public base::isystem
 {
 public :
   VisionSystem()
-    : ISystem("Vision-System")
+    : isystem("Vision-System")
   {
   }
-  // Inherited via ISystem
+  // Inherited via isystem
   virtual int Initialize() override
   {
     return ec::not_implemented_yet;
@@ -160,14 +97,14 @@ public :
 };
 
 class TeachingSystem
-  : public ISystem
+  : public base::isystem
 {
 public :
   TeachingSystem()
-    : ISystem("Teaching-System")
+    : isystem("Teaching-System")
   {
   }
-  // Inherited via ISystem
+  // Inherited via isystem
   virtual int Initialize() override
   {
     return ec::not_implemented_yet;
@@ -179,13 +116,13 @@ public :
 };
 
 class Application
-  : public ISystem
+  : public base::isystem
   , public ILogSender<LogData>
 {
 public :
   template<typename First, typename ...Others>
   Application(First&& sys, Others&&... others)
-    : ISystem("Application")
+    : isystem("Application")
     , m_state(ac::idle)
   {
     _addsystem(sys, others...);
@@ -204,11 +141,11 @@ private :
     systems.push_back(last);
   }
 private :
-  std::list<ISystem*> systems;
+  std::list<isystem*> systems;
   int m_state;
 
 public :
-  // Inherited via ISystem
+  // Inherited via isystem
   virtual int Initialize() override
   {
     write(0, "start to initialize all systems");
@@ -287,7 +224,7 @@ public :
 
 int main()
 {
-  Application app(new IOSystem, new MotorSystem, new VisionSystem);
+  Application app(new core::iosystem, new MotorSystem, new VisionSystem);
 
   app.Initialize();
 
