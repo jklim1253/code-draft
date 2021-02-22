@@ -7,6 +7,8 @@
 #include <deque>
 #include <mutex>
 
+#include "util/util.hpp"
+
 namespace ec
 {
 enum error_code
@@ -32,36 +34,6 @@ enum application_code
   no_response,
 };
 } // namespace ac
-
-namespace util
-{
-  using token_type = std::vector<std::string>;
-
-  token_type tokenize(std::string const& src, std::string const& delimiter = " \t\n")
-  {
-    token_type tokens;
-    bool need_to_ticket = true;
-
-    for (auto const& c : src)
-    {
-      if (delimiter.cend() == std::find(delimiter.cbegin(), delimiter.cend(), c))
-      {
-        if (need_to_ticket)
-        {
-          tokens.push_back(std::string());
-          need_to_ticket = false;
-        }
-        tokens.back().append(1, c);
-      }
-      else
-      {
-        need_to_ticket = true;
-      }
-    }
-
-    return tokens;
-  }
-}
 
 struct ISystem
 {
