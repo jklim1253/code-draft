@@ -199,14 +199,29 @@ public :
   int parse_command_line(const std::string& command)
   {
     util::token_type tokens = util::tokenize(command);
+    // quit
     if (tokens.size() == 1 && tokens[0] == "quit")
     {
       m_state = ac::need_to_stop;
     }
-    else if (tokens.size() == 2 && tokens[0] == "load")
+    // load <plugin> [<name>]
+    else if (tokens.size() >= 2 && tokens[0] == "load")
     {
-      m_loader.load(tokens[1], "test");
+      if (tokens.size() == 3)
+      {
+        m_loader.load(tokens[1], tokens[2]);
+      }
+      else
+      {
+        m_loader.load(tokens[1], tokens[1]);
+      }
     }
+    // unload <name>
+    else if (tokens.size() == 2 && tokens[0] == "unload")
+    {
+      m_loader.unload(tokens[1]);
+    }
+    // list
     else if (tokens.size() == 1 && tokens[0] == "list")
     {
       m_loader.list();

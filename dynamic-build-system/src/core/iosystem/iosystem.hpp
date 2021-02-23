@@ -3,16 +3,16 @@
 
 #include "base/isystem.hpp"
 
-#ifdef CORE_EXPORTS
-# define CORE_API __declspec(dllexport)
+#ifdef CORE_IOSYSTEM_EXPORTS
+# define CORE_IOSYSTEM_API __declspec(dllexport)
 #else
-# define CORE_API __declspec(dllimport)
-#endif // CORE_EXPORTS
+# define CORE_IOSYSTEM_API __declspec(dllimport)
+#endif // CORE_IOSYSTEM_EXPORTS
 
 namespace core
 {
 
-class CORE_API iosystem
+class CORE_IOSYSTEM_API iosystem
   : public base::isystem
 {
 public :

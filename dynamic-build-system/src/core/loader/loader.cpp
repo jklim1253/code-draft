@@ -5,37 +5,69 @@
 
 #include <Windows.h>
 #include <map>
+#include <memory>
+#include <iomanip>
+#include <iostream>
 
 namespace core
 {
 
-
+const char* const plugin_ordinal = "hello";
 
 #ifdef WINDOWS
 
-struct module
+template<class Signature>
+struct module_base
 {
+  typedef Signature module_entry_type;
+
   std::string name;
   HMODULE mod;
-  hello_type entry;
+  Signature entry;
+
+  module_base()
+    : mod(nullptr)
+    , entry(nullptr)
+  {
+  }
+  ~module_base()
+  {
+    entry = nullptr;
+    if (mod)
+    {
+      ::FreeLibrary(mod);
+      mod = nullptr;
+    }
+  }
 };
+
+using plugin_module = module_base<plugin_entry_type>;
+using plugin_memory = std::shared_ptr<plugin_module>;
 
 namespace win
 {
 
-module load(std::string const& _path)
+int load(std::string const& _path, plugin_memory& _lib)
 {
-  module lib;
   std::string fullpath = util::executable_path();
   fullpath = fullpath + "\\" + _path;
 
-  lib.mod = ::LoadLibraryA(fullpath.c_str());
-  lib.entry = (hello_type)::GetProcAddress(lib.mod, "hello");
+  _lib->mod = ::LoadLibraryA(fullpath.c_str());
+  if (_lib->mod == nullptr)
+  {
+    return ec::module_not_found;
+  }
+  _lib->entry = (plugin_module::module_entry_type)
+                ::GetProcAddress(_lib->mod, plugin_ordinal);
+  if (_lib->entry == nullptr)
+  {
+    return ec::module_format_is_not_supported;
+  }
 
-  return lib;
+  return ec::no_error;
 }
 
-}
+} // namespace win
 #else
 #endif // WINDOWS
 
@@ -43,7 +75,7 @@ class loader::implement
 {
   loader* m_parent;
 
-  std::map<std::string, module> m_depot;
+  std::map<std::string, plugin_memory> m_depot;
 public:
   implement(loader* _parent)
     : m_parent(_parent)
@@ -54,29 +86,40 @@ public:
   }
   int load(std::string const& _path, std::string const& _name)
   {
-    module lib = win::load(_path);
-    lib.name = _path;
-
-    if (lib.entry == nullptr)
+    plugin_memory lib = std::make_shared<plugin_module>();
+    
+    if (win::load(_path, lib) != ec::no_error)
     {
       return ec::failed_to_load_plugin;
     }
+    lib->name = _path;
 
     m_depot.insert(std::make_pair(_name, lib));
     return ec::no_error;
   }
   int unload(std::string const& _name)
   {
-    return ec::not_implemented_yet;
+    // TODO: if plugin is in use, stop using plugin
+    m_depot.erase(_name);
+    return ec::no_error;
   }
   int list() const
   {
-    int index = 0;
-    for (auto const& e : m_depot)
+    util::printline(std::cout, 20, '=');
+    if (m_depot.empty())
     {
-      printf("[%02d] %s, %s\n",
-            index+1, e.first.c_str(), e.second.name.c_str());
+      std::cout << "empty" << std::endl;
     }
+    else
+    {
+      int index = 0;
+      for (auto const& e : m_depot)
+      {
+        printf("[%02d] %s, %s\n",
+              index+1, e.first.c_str(), e.second->name.c_str());
+      }
+    }
+    util::printline(std::cout, 2, '=');
     return ec::no_error;
   }
 };

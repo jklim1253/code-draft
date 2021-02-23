@@ -6,8 +6,9 @@ command line based system controller
 
 ## Milestone
 
-- [ ] command processor
 - [ ] helper
+  - [ ] command processor
+  - [ ] stage manager
   - [ ] help contents
   - [ ] help processor
 - [ ] dynamic library management

@@ -3,16 +3,16 @@
 
 #include <string>
 
-#ifdef CORE_EXPORTS
-# define CORE_API __declspec(dllexport)
+#ifdef CORE_LOADER_EXPORTS
+# define CORE_LOADER_API __declspec(dllexport)
 #else
-# define CORE_API __declspec(dllimport)
-#endif // CORE_EXPORTS
+# define CORE_LOADER_API __declspec(dllimport)
+#endif // CORE_LOADER_EXPORTS
 
 namespace core
 {
 
-class CORE_API loader
+class CORE_LOADER_API loader
 {
 public:
   loader();

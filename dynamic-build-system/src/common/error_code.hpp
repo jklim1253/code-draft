@@ -13,6 +13,10 @@ enum error_code
   failed_to_release,
   failed_to_load_plugin,
 
+  // loader
+  module_not_found,
+  module_format_is_not_supported,
+
   critical_error = 0x40000000,
 };
 } // namespace ec
