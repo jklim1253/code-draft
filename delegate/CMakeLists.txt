@@ -14,8 +14,10 @@ endif()
 if (WIN32)
   add_compile_options(-DWINDOWS)
 else()
+  add_compile_options(-DNWINDOWS)
 endif()
 
+# root directory of all source file will be src directory.
 include_directories("${CMAKE_SOURCE_DIR}/src")
 
 add_subdirectory(src)
