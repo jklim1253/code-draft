@@ -8,6 +8,8 @@ set(FILE_HEADERS
   "loader.hpp"
 )
 
+add_compile_options(-DCORE_LOADER_EXPORTS)
+
 add_library(${PROJECT_NAME} SHARED
   ${FILE_SOURCES}
   ${FILE_HEADERS}

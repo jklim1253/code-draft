@@ -8,6 +8,8 @@ set(FILE_HEADERS
   "iosystem.hpp"
 )
 
+add_compile_options(-DCORE_IOSYSTEM_EXPORTS)
+
 add_library(${PROJECT_NAME} SHARED
   ${FILE_SOURCES}
   ${FILE_HEADERS}
